@@ -9,5 +9,4 @@ public class ImageconverterApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ImageconverterApplication.class, args);
 	}
-
 }
