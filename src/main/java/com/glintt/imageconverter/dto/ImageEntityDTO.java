@@ -8,7 +8,8 @@ public class ImageEntityDTO {
 		return imageString;
 	}
 
-	public void setImageString(byte[] imageString) {
+	public void setImageString(final byte[] imageString) {
+
 		this.imageString = imageString;
 	}
 

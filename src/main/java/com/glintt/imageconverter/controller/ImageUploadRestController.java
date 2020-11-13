@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.glintt.imageconverter.dto.ImageEntityDTO;
-import com.glintt.imageconverter.services.ImagerConvertorService;
+import com.glintt.imageconverter.servicesimplements.ImagerConvertorImpl;
 
 @RestController
 public class ImageUploadRestController {
 
 	@Autowired
-	ImagerConvertorService imageConversor;
+	ImagerConvertorImpl imageConversor;
 
 	@PostMapping(value = "/converteImage", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> processImage(@RequestBody ImageEntityDTO img) {
+	public ResponseEntity<?> processImage(@RequestBody(required = true) ImageEntityDTO img) {
 
 		return imageConversor.converteImage(img);
 	}

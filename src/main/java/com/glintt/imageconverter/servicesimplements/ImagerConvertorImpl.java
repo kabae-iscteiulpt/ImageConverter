@@ -11,11 +11,14 @@ import javax.imageio.ImageIO;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.glintt.imageconverter.dto.ImageEntityDTO;
 import com.glintt.imageconverter.dto.ResultMessageDTO;
 import com.glintt.imageconverter.services.ImagerConvertorService;
+import com.glintt.imageconverter.typemessages.TypeMessage;
 
+@Service
 public class ImagerConvertorImpl implements ImagerConvertorService {
 
 	/**
@@ -31,6 +34,12 @@ public class ImagerConvertorImpl implements ImagerConvertorService {
 
 		try {
 
+			if (img == null) {
+				result.setCode(TypeMessage.BAD_REQUEST.getCode());
+				result.setMessage(TypeMessage.BAD_REQUEST.name());
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+			}
+
 			final ByteArrayInputStream bais = new ByteArrayInputStream(img.getImageString());
 			final File outputfile = new File(pathNameOfOriginalFileToDeliver);
 
@@ -42,27 +51,23 @@ public class ImagerConvertorImpl implements ImagerConvertorService {
 
 			final String encodedfile = Base64.encodeBase64String(bytes);
 
-			result.setCode("000");
+			result.setCode(TypeMessage.SUCCESS.getCode());
 			result.setMessage(encodedfile);
 
 			fileInputStreamReader.close();
 			outputfile.delete();
 
 		} catch (FileNotFoundException e) {
-			result.setCode("001");
-			result.setMessage("NOT_FOUND");
+			result.setCode(TypeMessage.NOT_FOUND.getCode());
+			result.setMessage(TypeMessage.NOT_FOUND.name());
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
 		} catch (IOException e) {
 			result.setCode("002");
 			result.setMessage("INTERNAL_SERVER_ERROR");
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
-		} catch (IllegalStateException e) {
-			result.setCode("003");
-			result.setMessage("BAD_REQUEST");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 		} catch (IllegalArgumentException e) {
-			result.setCode("004");
-			result.setMessage("BAD_REQUEST");
+			result.setCode(TypeMessage.BAD_REQUEST.getCode());
+			result.setMessage(TypeMessage.BAD_REQUEST.name());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 		}
 
