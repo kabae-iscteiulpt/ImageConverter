@@ -1,16 +1,12 @@
 package com.glintt.imageconverter.servicesimplements;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.stereotype.Service;
 
 import com.glintt.imageconverter.dto.ImageEntityDTO;
@@ -22,56 +18,37 @@ import com.glintt.imageconverter.typemessages.TypeMessage;
 public class ImagerConvertorImpl implements ImagerConvertorService {
 
 	/**
-	 * Convert the imageEntity received into jpeg format.
+	 * Convert the imageEntity received into jpg format.
 	 * 
 	 * @param ImageEntityDTO
 	 * @return ImageEntity
 	 */
-	public ResponseEntity<?> converteImage(final ImageEntityDTO img) {
+	public ResultMessageDTO converteImage(final ImageEntityDTO img) {
 
-		final String pathNameOfOriginalFileToDeliver = System.getProperty("user.dir") + "\\imageToDeliver.jpg";
-		ResultMessageDTO result = new ResultMessageDTO();
+		final ResultMessageDTO result = new ResultMessageDTO();
 
 		try {
+			final ByteArrayInputStream bais = new ByteArrayInputStream(img.getImageToConvert());
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-			if (img == null) {
-				result.setCode(TypeMessage.BAD_REQUEST.getCode());
-				result.setMessage(TypeMessage.BAD_REQUEST.name());
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-			}
+			ImageIO.write(ImageIO.read(bais), "jpg", bos);
 
-			final ByteArrayInputStream bais = new ByteArrayInputStream(img.getImageString());
-			final File outputfile = new File(pathNameOfOriginalFileToDeliver);
+			byte[] data = bos.toByteArray();
 
-			ImageIO.write(ImageIO.read(bais), "jpg", outputfile);
-
-			final FileInputStream fileInputStreamReader = new FileInputStream(outputfile);
-			final byte[] bytes = new byte[(int) outputfile.length()];
-			fileInputStreamReader.read(bytes);
-
-			final String encodedfile = Base64.encodeBase64String(bytes);
+			final String encodedfile = Base64.encodeBase64String(data);
 
 			result.setCode(TypeMessage.SUCCESS.getCode());
 			result.setMessage(encodedfile);
 
-			fileInputStreamReader.close();
-			outputfile.delete();
-
-		} catch (FileNotFoundException e) {
-			result.setCode(TypeMessage.NOT_FOUND.getCode());
-			result.setMessage(TypeMessage.NOT_FOUND.name());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
 		} catch (IOException e) {
-			result.setCode("002");
-			result.setMessage("INTERNAL_SERVER_ERROR");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+			result.setCode(TypeMessage.INTERNAL_SERVER_ERROR.getCode());
+			result.setMessage(TypeMessage.INTERNAL_SERVER_ERROR.name());
 		} catch (IllegalArgumentException e) {
 			result.setCode(TypeMessage.BAD_REQUEST.getCode());
 			result.setMessage(TypeMessage.BAD_REQUEST.name());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
 		}
 
-		return new ResponseEntity<>(result, HttpStatus.OK);
+		return result;
 	}
 
 }

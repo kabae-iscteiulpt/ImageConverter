@@ -2,8 +2,7 @@ package com.glintt.imageconverter.typemessages;
 
 public enum TypeMessage {
 
-	SUCCESS("000", ""), NOT_FOUND("001", "NOT_FOUND"), INTERNAL_SERVER_ERROR("002", "INTERNAL_SERVER_ERROR"),
-	BAD_REQUEST("003", "BAD_REQUEST");
+	SUCCESS("000", ""), BAD_REQUEST("001", "BAD_REQUEST"), INTERNAL_SERVER_ERROR("002", "INTERNAL_SERVER_ERROR"),;
 
 	private String code;
 	private String message;

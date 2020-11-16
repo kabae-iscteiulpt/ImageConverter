@@ -1,11 +1,10 @@
 package com.glintt.imageconverter.services;
 
-import org.springframework.http.ResponseEntity;
-
 import com.glintt.imageconverter.dto.ImageEntityDTO;
+import com.glintt.imageconverter.dto.ResultMessageDTO;
 
 public interface ImagerConvertorService {
 
-	ResponseEntity<?> converteImage(final ImageEntityDTO img);
+	ResultMessageDTO converteImage(final ImageEntityDTO img);
 
 }

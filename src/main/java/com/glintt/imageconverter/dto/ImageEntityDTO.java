@@ -2,15 +2,15 @@ package com.glintt.imageconverter.dto;
 
 public class ImageEntityDTO {
 
-	private byte[] imageString;
+	private byte[] imageToConvert;
 
-	public byte[] getImageString() {
-		return imageString;
+	public byte[] getImageToConvert() {
+		return imageToConvert;
 	}
 
-	public void setImageString(final byte[] imageString) {
+	public void setImageToConvert(final byte[] imageToConvert) {
 
-		this.imageString = imageString;
+		this.imageToConvert = imageToConvert;
 	}
 
 }
